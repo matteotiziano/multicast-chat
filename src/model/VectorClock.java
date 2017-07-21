@@ -9,85 +9,79 @@ import view.Logger;
 
 public class VectorClock implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = -8761765948522375160L;
-	private HashMap<String, Integer> vectorClock;
+  private static final long serialVersionUID = -8761765948522375160L;
+  private HashMap<String, Integer> vectorClock;
 
-	public VectorClock() {
-		this.vectorClock = new HashMap<String, Integer>();
-	}
+  public VectorClock() { this.vectorClock = new HashMap<String, Integer>(); }
 
-	public HashMap<String, Integer> getVector() {
-		return vectorClock;
-	}
+  public HashMap<String, Integer> getVector() { return vectorClock; }
 
-	public int addOneTo(String processId) {
-		if (!vectorClock.containsKey(processId)) {
-			vectorClock.put(processId, 0);
-		}
-		int value = vectorClock.get(processId) + 1;
-		vectorClock.put(processId, value);
-		return value;
-	}
-	
-	public void set(String processId, int value) {
-		vectorClock.put(processId, value);
-	}
+  public int addOneTo(String processId) {
+    if (!vectorClock.containsKey(processId)) {
+      vectorClock.put(processId, 0);
+    }
+    int value = vectorClock.get(processId) + 1;
+    vectorClock.put(processId, value);
+    return value;
+  }
 
-	public int get(String processId) {
-		if (!vectorClock.containsKey(processId)) {
-			vectorClock.put(processId, 0);
-		}
-		return vectorClock.get(processId);
-	}
+  public void set(String processId, int value) {
+    vectorClock.put(processId, value);
+  }
 
-	public Set<String> getProcessIds() {
-		return vectorClock.keySet();
-	}
+  public int get(String processId) {
+    if (!vectorClock.containsKey(processId)) {
+      vectorClock.put(processId, 0);
+    }
+    return vectorClock.get(processId);
+  }
 
-	public static VectorClock mergeClocks(VectorClock vc1, VectorClock vc2) {
-		VectorClock merge = new VectorClock();
-		Iterator<String> i1 = vc1.getProcessIds().iterator();
-		Iterator<String> i2;
-		String id1, id2;
-		int val1, val2;
+  public Set<String> getProcessIds() { return vectorClock.keySet(); }
 
-		while (i1.hasNext()) {
-			i2 = vc2.getProcessIds().iterator();
-			id1 = i1.next();
-			while (i2.hasNext()) {
-				id2 = i2.next();
-				if (id1.equals(id2)) {
-					val1 = vc1.get(id1);
-					val2 = vc2.get(id2);
-					merge.set(id1, Math.max(val1, val2));
-				}
-			}
-		}
+  public static VectorClock mergeClocks(VectorClock vc1, VectorClock vc2) {
+    VectorClock merge = new VectorClock();
+    Iterator<String> i1 = vc1.getProcessIds().iterator();
+    Iterator<String> i2;
+    String id1, id2;
+    int val1, val2;
 
-		return merge;
-	}
+    while (i1.hasNext()) {
+      i2 = vc2.getProcessIds().iterator();
+      id1 = i1.next();
+      while (i2.hasNext()) {
+        id2 = i2.next();
+        if (id1.equals(id2)) {
+          val1 = vc1.get(id1);
+          val2 = vc2.get(id2);
+          merge.set(id1, Math.max(val1, val2));
+        }
+      }
+    }
 
-	public String toString() {
-		String result = "[";
-		Iterator<String> it = vectorClock.keySet().iterator();
-		while (it.hasNext()) {
-			result += vectorClock.get(it.next());
-			if (it.hasNext()) {
-				result += ", ";
-			}
-		}
-		return result + "]";
-	}
-	
-	public Object Clone() {
-		VectorClock vectorClockClone = null;
-		try {
-			vectorClockClone = (VectorClock) super.clone();
-			vectorClockClone.vectorClock = new HashMap<String, Integer>(vectorClock);
-		} catch (CloneNotSupportedException e) {
-			Logger.println("CloneNotSupportedException in VectorClock: " + e.getMessage());
-		}
-		return vectorClockClone;
-	}
+    return merge;
+  }
 
+  public String toString() {
+    String result = "[";
+    Iterator<String> it = vectorClock.keySet().iterator();
+    while (it.hasNext()) {
+      result += vectorClock.get(it.next());
+      if (it.hasNext()) {
+        result += ", ";
+      }
+    }
+    return result + "]";
+  }
+
+  public Object Clone() {
+    VectorClock vectorClockClone = null;
+    try {
+      vectorClockClone = (VectorClock)super.clone();
+      vectorClockClone.vectorClock = new HashMap<String, Integer>(vectorClock);
+    } catch (CloneNotSupportedException e) {
+      Logger.println("CloneNotSupportedException in VectorClock: " +
+                     e.getMessage());
+    }
+    return vectorClockClone;
+  }
 }
